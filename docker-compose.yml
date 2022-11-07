@@ -1,0 +1,56 @@
+---
+services:
+  certificate-proxy:
+    environment:
+      SERVER_CONFIG_0: 'docker-wordpress.gbtecdev.net;http://wordpress:80'
+    image: registry.gitlab.com/psicho/certificate-proxy:1.2.0
+    ports:
+      - '80:80'
+      - '443:443'
+    restart: 'unless-stopped'
+    volumes:
+      - source: certificate
+        target: /etc/letsencrypt
+        type: volume
+
+  mysql:
+    # https://stackoverflow.com/questions/55559386/how-to-fix-mbind-operation-not-permitted-in-mysql-error-log
+    cap_add:
+      - SYS_NICE
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      WORDPRESS_DB_PASSWORD: $WORDPRESS_DB_PASSWORD
+    image: mysql:8.0
+    ports:
+      - '3306:3306'
+    restart: 'unless-stopped'
+    volumes:
+      - source: ./init-db.sh
+        target: /docker-entrypoint-initdb.d/init-db.sh
+        type: bind
+      - source: mysql_data
+        target: /var/lib/mysql
+        type: volume
+
+  wordpress:
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: $WORDPRESS_DB_PASSWORD
+      WORDPRESS_DB_NAME: wordpress
+    image: wordpress:5.7
+    ports:
+      - '8080:80'
+    restart: 'unless-stopped'
+    volumes:
+      - source: httpdocs
+        target: /var/www/html
+        type: volume
+
+volumes:
+  certificate:
+    name: certificate
+  httpdocs:
+    name: httpdocs
+  mysql_data:
+    name: mysql_data
