@@ -2,7 +2,7 @@
 services:
   certificate-proxy:
     environment:
-      SERVER_CONFIG_0: 'docker-wordpress.gbtecdev.net;http://wordpress:80'
+      SERVER_CONFIG_0: '$DOMAIN_NAME;http://wordpress:80'
     image: registry.gitlab.com/psicho/certificate-proxy:1.2.0
     ports:
       - '80:80'
