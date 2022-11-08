@@ -8,7 +8,7 @@ Demo of Infrastructure as Code
 
 * A Linux machine that can be accessed via http (Port 80) and https (Port 443)
 * A domain name that points to the machine
-* docker engine and docker-compose installed (https://docs.docker.com/engine/install/)
+* docker engine and docker compose installed (https://docs.docker.com/engine/install/#server)
 * git installed (already available in many Linux distributions such as Ubuntu)
 
 ### Installation
